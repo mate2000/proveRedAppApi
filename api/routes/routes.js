@@ -10,7 +10,7 @@ router.get("/api/v2", (request, response) => {
 
 router
   .get("/users", userController.getUsers)
-  .get("/api/v2/users/:id", userController.getUser)
+  .get("/users/:id", userController.getUser)
   .post("/api/v2/users", userController.saveUser)
   .put("/api/v2/users/:id", userController.updateUser)
   .delete("/api/v2/users/:id", userController.deleteUser);
