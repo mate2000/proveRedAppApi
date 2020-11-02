@@ -72,8 +72,8 @@ const saveUser = async (request, response) => {
     response.status(201).send(responseJSON);
   } catch (error) {
     let responseJSON = {};
-    responseJSON.ok = true;
-    responseJSON.message = "User created";
+    responseJSON.ok = false;
+    responseJSON.message = "User Not has been created";
     responseJSON.info = request.body;
     response.status(404).send(responseJSON);
   }
