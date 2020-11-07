@@ -45,18 +45,25 @@ const saveContractDocument = async (request, response) => {
 const getContracts = async (request, response) => {
   let responseJSON = {};
   try {
-    const sql = "select * from Users";
-    let responseDB = await _servicePg.execute(sql);
-    let rowCount = responseDB.rowCount;
+    const sql =
+      "select * from contracts where idclient = $1  or idprovider = $1";
+    let id = request.params.id;
+    let responseDB = await _servicePg.execute(sql, [id]);
     let rows = responseDB.rows;
-    responseJSON.ok = true;
-    responseJSON.message = "Users ok";
-    responseJSON.info = rows;
-    responseJSON.metainfo = { total: rowCount };
-    response.status(200).send(responseJSON);
+    let rowCount = responseDB.rowCount;
+    if (rowCount == 0) {
+      responseJSON.ok = false;
+      responseJSON.message = "Contract not found (Verify id)";
+      response.status(404).send(responseJSON);
+    } else {
+      responseJSON.ok = true;
+      responseJSON.message = "Contracts Ok";
+      responseJSON.info = rows;
+      response.status(200).send(responseJSON);
+    }
   } catch (error) {
     responseJSON.ok = false;
-    responseJSON.message = "Error while select user.";
+    responseJSON.message = "Error while select Contracts";
     responseJSON.info = error.message;
     response.status(400).send(responseJSON);
   }
@@ -70,24 +77,19 @@ const getContracts = async (request, response) => {
 const getContract = async (request, response) => {
   let responseJSON = {};
   try {
-    const sql = "select * from Users where idUser = $1";
+    const sql = "select * from Contracts where idContract = $1";
     let id = request.params.id;
     let responseDB = await _servicePg.execute(sql, [id]);
-    let rows = responseDB.rows;
     let rowCount = responseDB.rowCount;
-    if (rowCount == 0) {
-      responseJSON.ok = false;
-      responseJSON.message = "Users not found (Verify id)";
-      response.status(404).send(responseJSON);
-    } else {
-      responseJSON.ok = true;
-      responseJSON.message = "Users Ok";
-      responseJSON.info = rows;
-      response.status(200).send(responseJSON);
-    }
+    let rows = responseDB.rows;
+    responseJSON.ok = true;
+    responseJSON.message = "Contracts ok";
+    responseJSON.info = rows;
+    responseJSON.metainfo = { total: rowCount };
+    response.status(200).send(responseJSON);
   } catch (error) {
     responseJSON.ok = false;
-    responseJSON.message = "Error while select user";
+    responseJSON.message = "Error while select contracts.";
     responseJSON.info = error.message;
     response.status(400).send(responseJSON);
   }
@@ -102,25 +104,28 @@ const saveContract = async (request, response) => {
   let responseJSON = {};
   try {
     const sql =
-      "INSERT INTO Users (iduser, fullname, email, cellphone, password_, entity, rol) VALUES($1, $2, $3, $4, $5, $6, $7);";
+      "INSERT INTO public.contracts (idclient, idprovider, idservice, totalneto, documentcontract, isaceptedprovider, isaceptedclient, isprovidernotified, isclientnotified, state) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
     let body = request.body;
     let values = [
-      body.id,
-      body.fullname,
-      body.email,
-      body.cellphoneNumber,
-      body.password,
-      body.entity,
-      body.rol,
+      body.idClient,
+      body.idProvider,
+      body.idService,
+      body.totalNeto,
+      body.documentoContract,
+      body.isAceptedProvider,
+      body.isAceptedClient,
+      body.isProviderNotified,
+      body.isClientNotified,
+      body.state,
     ];
     await _servicePg.execute(sql, values);
     responseJSON.ok = true;
-    responseJSON.message = "User created";
+    responseJSON.message = "Contract created";
     responseJSON.info = body;
     response.status(201).send(responseJSON);
   } catch (error) {
     responseJSON.ok = false;
-    responseJSON.message = "Error while created an user";
+    responseJSON.message = "Error while created a contract";
     responseJSON.info = error.message;
     response.status(400).send(responseJSON);
   }
@@ -135,33 +140,34 @@ const updateContract = async (request, response) => {
   let responseJSON = {};
   try {
     const sql =
-      "UPDATE Users SET fullname=$1, email=$2, cellphone=$3, password_=$4, entity=$5, rol=$6 WHERE iduser=$7;";
+      "UPDATE Contracts SET totalneto=$1, documentcontract=$2, isaceptedprovider=$3, isaceptedclient=$4, isprovidernotified=$5, isclientnotified=$6, state=$7 WHERE idcontract=$8";
     let id = request.params.id;
     let body = request.body;
     values = [
-      body.fullname,
-      body.email,
-      body.cellphoneNumber,
-      body.password,
-      body.entity,
-      body.rol,
+      body.totalNeto,
+      body.documentoContract,
+      body.isAceptedProvider,
+      body.isAceptedClient,
+      body.isProviderNotified,
+      body.isClientNotified,
+      body.state,
       id,
     ];
     let responseDB = await _servicePg.execute(sql, values);
     let rowCount = responseDB.rowCount;
     if (rowCount == 0) {
       responseJSON.ok = false;
-      responseJSON.message = "Users not found (Verify id).";
+      responseJSON.message = "Contract not found (Verify id).";
       response.status(404).send(responseJSON);
     } else {
       responseJSON.ok = true;
-      responseJSON.message = "User updated";
+      responseJSON.message = "Contract updated";
       responseJSON.info = body;
       response.status(200).send(responseJSON);
     }
   } catch (error) {
     responseJSON.ok = false;
-    responseJSON.message = "Error while update user.";
+    responseJSON.message = "Error while update contrac.";
     responseJSON.info = error.message;
     response.status(400).send(responseJSON);
   }
@@ -175,17 +181,17 @@ const updateContract = async (request, response) => {
 const deleteContract = async (request, response) => {
   let responseJSON = {};
   try {
-    sql = "DELETE FROM Users WHERE iduser=$1;";
+    sql = "DELETE FROM Contracts WHERE idcontract=$1;";
     let id = request.params.id;
     let responseDB = await _servicePg.execute(sql, [id]);
     let rowCount = responseDB.rowCount;
     if (rowCount == 0) {
       responseJSON.ok = false;
-      responseJSON.message = "Users not found (Verify id).";
+      responseJSON.message = "Contract not found (Verify id).";
       response.status(404).send(responseJSON);
     } else {
       responseJSON.ok = true;
-      responseJSON.message = "Users deleted";
+      responseJSON.message = "Contract deleted";
       responseJSON.metainfo = { total: rowCount };
       response.status(200).send(responseJSON);
     }

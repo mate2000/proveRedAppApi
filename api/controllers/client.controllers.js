@@ -68,9 +68,9 @@ const getClient = async (request, response) => {
 const saveClient = async (request, response) => {
   let responseJSON = {};
   try {
-    const sql = "INSERT INTO clients(iduser) VALUES($1);";
+    const sql = "INSERT INTO clients(iduser,idClient) VALUES($1,$2);";
     let body = request.body;
-    await _servicePg.execute(sql, [body.idUser]);
+    await _servicePg.execute(sql, [body.idUser, body.idClient]);
     responseJSON.ok = true;
     responseJSON.message = "Client created";
     responseJSON.info = body;
@@ -132,7 +132,7 @@ const updateClient = async (request, response) => {
 const deleteClient = async (request, response) => {
   let responseJSON = {};
   try {
-    sql = "DELETE FROM Clients WHERE iduser=$1;";
+    sql = "DELETE FROM Users WHERE iduser=$1;";
     let id = request.params.id;
     let responseDB = await _servicePg.execute(sql, [id]);
     let rowCount = responseDB.rowCount;

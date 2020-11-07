@@ -51,6 +51,11 @@ router
   .delete("/api/v2/reviews/:id", reviewsControllers.deleteReview)
 
   .post("/api/v2/contracts/images", contractController.saveContractDocument)
+  .get("/api/v2/contracts/:id", contractController.getContracts)
+  .get("/api/v2/contract/:id", contractController.getContract)
+  .post("/api/v2/contracts", contractController.saveContract)
+  .put("/api/v2/contracts/:id", contractController.updateContract)
+  .delete("/api/v2/contracts/:id", contractController.deleteContract)
 
   .use("/", authController.notFound);
 

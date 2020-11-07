@@ -56,7 +56,7 @@ const getProvider = async (request, response) => {
 const saveProvider = async (request, response) => {
   try {
     const sql =
-      "INSERT INTO public.providers (iduser, companyname, typeprovider, servicedescription, averagepunctuation) VALUES($1, $2, $3, $4, $5);";
+      "INSERT INTO public.providers (iduser, companyname, typeprovider, servicedescription, averagepunctuation,idprovider) VALUES($1, $2, $3, $4, $5,$6);";
     let body = request.body;
     let values = [
       body.idUser,
@@ -64,6 +64,7 @@ const saveProvider = async (request, response) => {
       body.typeProvider,
       body.serviceDescription,
       body.averagePunctuation,
+      body.idUser,
     ];
     await _servicePg.execute(sql, values);
     let responseJSON = {};
@@ -113,7 +114,7 @@ const updateProvider = async (request, response) => {
 const deleteProvider = async (request, response) => {
   let responseJSON = {};
   try {
-    sql = "DELETE FROM Providers WHERE iduser=$1;";
+    sql = "DELETE FROM Users WHERE iduser=$1;";
     let id = request.params.id;
     let responseDB = await _servicePg.execute(sql, [id]);
     let rowCount = responseDB.rowCount;
