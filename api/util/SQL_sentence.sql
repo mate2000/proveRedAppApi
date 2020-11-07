@@ -21,7 +21,7 @@ CREATE TABLE public.Providers (
 
 CREATE TABLE public.Clients (
 	idClient serial  NOT null primary key,
-	 idUser varchar(20) ,
+	idUser varchar(20) ,
 	foreign key (idUser) references Users(idUser) on update cascade on delete cascade 
 );
 

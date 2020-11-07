@@ -7,56 +7,22 @@ const _servicePg = new ServicePostgres();
  * @param {Request} request
  * @param {Response} response
  */
-const saveContractDocument = async (request, response) => {
-  try {
-    let archivo = request.files.Contract;
-    //console.log(archivo);
-    let name = archivo.name;
-    let extend = name.split(".");
-    extend = extend[extend.length - 1];
-    if (extend === "pdf") {
-      await archivo.mv("docs/" + name);
-      let responseJSON = {};
-      responseJSON.ok = true;
-      responseJSON.message = "Archivo ok";
-      responseJSON.info = archivo.name;
-      response.send(responseJSON);
-    } else {
-      let responseJSON = {};
-      responseJSON.ok = false;
-      responseJSON.message = "File no accepted. [pdf]";
-      responseJSON.info = archivo.name;
-      response.send(responseJSON);
-    }
-  } catch (error) {
-    let responseJSON = {};
-    responseJSON.ok = false;
-    responseJSON.message = "Error while saving the document.";
-    responseJSON.info = error.message;
-    response.status(400).send(responseJSON);
-  }
-};
-
-/**
- *
- * @param {Request} request
- * @param {Response} response
- */
-const getContracts = async (request, response) => {
+const getClients = async (request, response) => {
   let responseJSON = {};
   try {
-    const sql = "select * from Users";
+    const sql =
+      "select fullname, email, cellphone, password_ from clients inner join users on clients.iduser = users.iduser";
     let responseDB = await _servicePg.execute(sql);
     let rowCount = responseDB.rowCount;
     let rows = responseDB.rows;
     responseJSON.ok = true;
-    responseJSON.message = "Users ok";
+    responseJSON.message = "Client ok";
     responseJSON.info = rows;
     responseJSON.metainfo = { total: rowCount };
     response.status(200).send(responseJSON);
   } catch (error) {
     responseJSON.ok = false;
-    responseJSON.message = "Error while select user.";
+    responseJSON.message = "Error while select client.";
     responseJSON.info = error.message;
     response.status(400).send(responseJSON);
   }
@@ -67,27 +33,28 @@ const getContracts = async (request, response) => {
  * @param {Request} request
  * @param {Response} response
  */
-const getContract = async (request, response) => {
+const getClient = async (request, response) => {
   let responseJSON = {};
   try {
-    const sql = "select * from Users where idUser = $1";
+    const sql =
+      "select fullname, email, cellphone, password_ from clients inner join users on clients.iduser = users.iduser where clients.idUser = $1";
     let id = request.params.id;
     let responseDB = await _servicePg.execute(sql, [id]);
     let rows = responseDB.rows;
     let rowCount = responseDB.rowCount;
     if (rowCount == 0) {
       responseJSON.ok = false;
-      responseJSON.message = "Users not found (Verify id)";
+      responseJSON.message = "Client not found (Verify id)";
       response.status(404).send(responseJSON);
     } else {
       responseJSON.ok = true;
-      responseJSON.message = "Users Ok";
+      responseJSON.message = "Client Ok";
       responseJSON.info = rows;
       response.status(200).send(responseJSON);
     }
   } catch (error) {
     responseJSON.ok = false;
-    responseJSON.message = "Error while select user";
+    responseJSON.message = "Error while select client";
     responseJSON.info = error.message;
     response.status(400).send(responseJSON);
   }
@@ -98,29 +65,19 @@ const getContract = async (request, response) => {
  * @param {Request} request
  * @param {Response} response
  */
-const saveContract = async (request, response) => {
+const saveClient = async (request, response) => {
   let responseJSON = {};
   try {
-    const sql =
-      "INSERT INTO Users (iduser, fullname, email, cellphone, password_, entity, rol) VALUES($1, $2, $3, $4, $5, $6, $7);";
+    const sql = "INSERT INTO clients(iduser) VALUES($1);";
     let body = request.body;
-    let values = [
-      body.id,
-      body.fullname,
-      body.email,
-      body.cellphoneNumber,
-      body.password,
-      body.entity,
-      body.rol,
-    ];
-    await _servicePg.execute(sql, values);
+    await _servicePg.execute(sql, [body.idUser]);
     responseJSON.ok = true;
-    responseJSON.message = "User created";
+    responseJSON.message = "Client created";
     responseJSON.info = body;
     response.status(201).send(responseJSON);
   } catch (error) {
     responseJSON.ok = false;
-    responseJSON.message = "Error while created an user";
+    responseJSON.message = "Error while created a client";
     responseJSON.info = error.message;
     response.status(400).send(responseJSON);
   }
@@ -131,7 +88,7 @@ const saveContract = async (request, response) => {
  * @param {Request} request
  * @param {Response} response
  */
-const updateContract = async (request, response) => {
+const updateClient = async (request, response) => {
   let responseJSON = {};
   try {
     const sql =
@@ -172,36 +129,35 @@ const updateContract = async (request, response) => {
  * @param {Request} request
  * @param {Response} response
  */
-const deleteContract = async (request, response) => {
+const deleteClient = async (request, response) => {
   let responseJSON = {};
   try {
-    sql = "DELETE FROM Users WHERE iduser=$1;";
+    sql = "DELETE FROM Clients WHERE iduser=$1;";
     let id = request.params.id;
     let responseDB = await _servicePg.execute(sql, [id]);
     let rowCount = responseDB.rowCount;
     if (rowCount == 0) {
       responseJSON.ok = false;
-      responseJSON.message = "Users not found (Verify id).";
+      responseJSON.message = "Clients not found (Verify id).";
       response.status(404).send(responseJSON);
     } else {
       responseJSON.ok = true;
-      responseJSON.message = "Users deleted";
+      responseJSON.message = "Clients deleted";
       responseJSON.metainfo = { total: rowCount };
       response.status(200).send(responseJSON);
     }
   } catch (error) {
     responseJSON.ok = false;
-    responseJSON.message = "Error while delete user.";
+    responseJSON.message = "Error while delete Clients.";
     responseJSON.info = error;
     response.status(400).send(responseJSON);
   }
 };
 
 module.exports = {
-  saveContractDocument,
-  getContracts,
-  getContract,
-  saveContract,
-  updateContract,
-  deleteContract,
+  getClients,
+  getClient,
+  saveClient,
+  updateClient,
+  deleteClient,
 };

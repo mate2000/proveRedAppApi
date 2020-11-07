@@ -43,7 +43,7 @@ const getUser = async (request, response) => {
     if (rowCount == 0) {
       responseJSON.ok = false;
       responseJSON.message = "Users not found (Verify id)";
-      response.status(400).send(responseJSON);
+      response.status(404).send(responseJSON);
     } else {
       responseJSON.ok = true;
       responseJSON.message = "Users Ok";
@@ -117,7 +117,7 @@ const updateUser = async (request, response) => {
     if (rowCount == 0) {
       responseJSON.ok = false;
       responseJSON.message = "Users not found (Verify id).";
-      response.status(400).send(responseJSON);
+      response.status(404).send(responseJSON);
     } else {
       responseJSON.ok = true;
       responseJSON.message = "User updated";
@@ -147,7 +147,7 @@ const deleteUser = async (request, response) => {
     if (rowCount == 0) {
       responseJSON.ok = false;
       responseJSON.message = "Users not found (Verify id).";
-      response.status(400).send(responseJSON);
+      response.status(404).send(responseJSON);
     } else {
       responseJSON.ok = true;
       responseJSON.message = "Users deleted";
