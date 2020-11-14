@@ -18,6 +18,9 @@ router
   .post("/api/v2/users/login", authController.loginUser)
   .post("/api/v2/users", userController.saveUser)
 
+  .post("/api/v2/clients", clientController.saveClient)
+  .post("/api/v2/providers", providerController.saveProvider)
+
   .use("/", authController.middelewar)
   .get("/api/v2/users/valid", authController.validToken)
 
@@ -28,12 +31,12 @@ router
 
   .get("/api/v2/clients", clientController.getClients)
   .get("/api/v2/clients/:id", clientController.getClient)
-  .post("/api/v2/clients", clientController.saveClient)
+  
   .delete("/api/v2/clients/:id", clientController.deleteClient)
 
   .get("/api/v2/providers", providerController.getProviders)
   .get("/api/v2/providers/:id", providerController.getProvider)
-  .post("/api/v2/providers", providerController.saveProvider)
+
   .put("/api/v2/providers/:id", providerController.updateProvider)
   .delete("/api/v2/providers/:id", providerController.deleteProvider)
 

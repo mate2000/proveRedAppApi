@@ -9,8 +9,8 @@ const app = express();
 app.use(express.json());
 app.use(fileUpload());
 
-app.use(routes);
 app.use(cors());
+app.use(routes);
 //md5
 const PORT = 3001;
 app.listen(PORT, () => {

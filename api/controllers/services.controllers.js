@@ -69,13 +69,13 @@ const saveService = async (request, response) => {
     const sql =
       "INSERT INTO Services (idprovider, description, initdate, findate, state, total) VALUES($1, $2, $3, $4, $5, $6);";
     let body = request.body;
-    let initDate = new Date(request.body.initDate);
-    let finDate = new Date(request.body.finDate);
+    let initdate = new Date(request.body.initdate);
+    let findate = new Date(request.body.findate);
     let values = [
-      body.idProvider,
+      body.idprovider,
       body.description,
-      initDate,
-      finDate,
+      initdate,
+      findate,
       body.state,
       body.total,
     ];
